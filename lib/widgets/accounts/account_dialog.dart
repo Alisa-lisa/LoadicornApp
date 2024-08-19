@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loadiapp/controllers/accounts.dart';
 import 'package:decimal/decimal.dart';
-import 'package:loadiapp/models/account_type.dart';
 
 class AccountDialog extends StatefulWidget {
   const AccountDialog({super.key});
@@ -90,7 +89,7 @@ class AccountDialogState extends State<AccountDialog> {
 							_type = value!;
 						});
 					},
-					hint: const Text('Choose a tag'))
+					hint: const Text('Account type'))
 			      ]),
 				TextButton(
 				  style: TextButton.styleFrom(

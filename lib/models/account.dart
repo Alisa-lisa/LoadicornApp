@@ -19,4 +19,14 @@ class Account {
 		required this.active
 	});
 
+	factory Account.fromJson(Map<String, dynamic> json) {
+		return Account(
+			id: json['id'],
+			comment: json['comment'],
+			type: json['type'],
+			isCash: json['is_cash'],
+			balance: Decimal.parse(json['balance']),
+			active: json['active']
+			);
+	}
 }
