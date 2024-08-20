@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:format/format.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +16,7 @@ Future<String> createTransaction(
 	List<int> tags
 	) async {
 	String url = format("{}/create", baseUri);
-	var resp = await http.post(Uri.parse(url), body: {
+	Map<String, dynamic> payload = {
 		'comment': comment,
 		'amount': amount,
 		'is_business': isBusiness,
@@ -24,7 +25,13 @@ Future<String> createTransaction(
 		'origin_account': originAcc,
 		'target_account': targetAcc,
 		'tags': tags
-	});
+	};
+	Map<String, String> headers = {
+		'Content-Type': 'application/json',
+	};
+	print("Prepared payload: ${payload}");
+	var resp = await http.post(Uri.parse(url), body: jsonEncode(payload), headers: headers);
+	print("${resp.statusCode} and ${resp.body}");
 	if (resp.statusCode == 200) {
 		return resp.body;
 	}

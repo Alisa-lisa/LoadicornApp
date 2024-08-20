@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:loadiapp/models/account.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
 import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
+import 'package:loadiapp/controllers/state.dart';
+import 'package:loadiapp/controllers/accounts.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+	WidgetsFlutterBinding.ensureInitialized();
+	List<Account> accs = await fetchAccounts();
+	CustomCache cache = CustomCache();
+	cache.add({"accounts": accs});
+	
+  runApp( MyApp(
+		  cache: cache
+		  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+	final CustomCache cache;
+
+  const MyApp({required this.cache, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,22 +31,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Loadicorn'),
+      home: MyHomePage(title: 'Loadicorn', cache: cache),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+	final CustomCache cache;
+	final String title;
+  const MyHomePage({super.key, required this.title, required this.cache});
 
-  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
+	CustomCache get cache => widget.cache;
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return const TransactionDialog();
+                          return TransactionDialog(cache: cache);
                         });
                   }),
 

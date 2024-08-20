@@ -34,6 +34,7 @@ dependencies:
   http:
   decimal:
   format:
+  bloc:
 
 
   # The following adds the Cupertino Icons font to your application.
