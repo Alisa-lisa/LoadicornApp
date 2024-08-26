@@ -35,6 +35,7 @@ dependencies:
   decimal:
   format:
   bloc:
+  multi_dropdown:
 
 
   # The following adds the Cupertino Icons font to your application.

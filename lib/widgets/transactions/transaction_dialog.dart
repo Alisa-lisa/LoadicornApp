@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:decimal/decimal.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/transactions.dart';
 import 'package:loadiapp/models/account.dart';
+import 'package:loadiapp/models/tag.dart';
 
 class TransactionDialog extends StatefulWidget {
 	final CustomCache cache;
@@ -19,6 +21,7 @@ class TransactionDialogState extends State<TransactionDialog > {
 
 	final TextEditingController _comment = TextEditingController();
 	final TextEditingController _amount = TextEditingController();
+	final MultiSelectController<Tag> _tags = MultiSelectController<Tag>();
 	String? origin;
 	String? target;
 	bool _isBusiness = false;
@@ -44,6 +47,16 @@ class TransactionDialogState extends State<TransactionDialog > {
 	return res;
   }
 
+
+  List<DropdownItem<Tag>> prepareTags() {
+  	List<DropdownItem<Tag>> items = [];
+	items.addAll(cache.state["tags"].map<DropdownItem<Tag>>((Tag value) {
+		return DropdownItem(label: value.name, value: value);
+	}).toList());
+	return items;
+  }
+
+
   Future<void> saveTransaction(String comment,
 	  Decimal amount,
 	  bool isBusiness,
@@ -51,9 +64,13 @@ class TransactionDialogState extends State<TransactionDialog > {
 	  String? parentTransaction,
 	  String? origin,
 	  String? target,
-	  List<int> tags) async {
-	  var res = await createTransaction(comment, amount, isBusiness, isBorrowed, null, origin, target, []);
-	  print(res);
+	  List<DropdownItem<Tag>> tags) async {
+	  List<int> taggos = [];
+	  taggos.addAll(tags.map((DropdownItem<Tag> t) {return t.value.id;}).toList());
+	  var res = await createTransaction(comment, amount, isBusiness, isBorrowed, null, origin, target, taggos);
+	_tags.clearAll();
+	_amount.clear();
+	_comment.clear();
 }
 
   @override
@@ -61,6 +78,7 @@ class TransactionDialogState extends State<TransactionDialog > {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     List<DropdownMenuItem<String>> ddItems = getAccounts();
+    List<DropdownItem<Tag>> tagsItems = prepareTags();
     return Dialog(
         child: SingleChildScrollView(
 		child: Stack( children: [
@@ -69,6 +87,7 @@ class TransactionDialogState extends State<TransactionDialog > {
                 width: width * 0.9,
                 height: height * 0.8,
                 child: Column(
+			mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       const Text("New Transaction"),
@@ -162,7 +181,24 @@ class TransactionDialogState extends State<TransactionDialog > {
 				      }
 				      )
 		      ]),
-                      const Text("tags"),
+                      Row(children: [
+		      	const Text("tags"),
+			Padding(
+				padding: const EdgeInsets.fromLTRB(10, 2, 0, 5),
+				child: SizedBox( width: width * 0.6,
+					child: MultiDropdown<Tag>(
+					items: tagsItems,
+					controller: _tags,
+					enabled: true,
+					searchEnabled: true,
+					chipDecoration: const ChipDecoration(
+					  backgroundColor: Colors.yellow,
+					  wrap: true,
+					  runSpacing: 2,
+					  spacing: 10,
+					),
+					)
+			))]),
 		      TextButton(
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.blue,
@@ -171,7 +207,7 @@ class TransactionDialogState extends State<TransactionDialog > {
                           ),
                           child: const Text("Save"),
                           onPressed: () async {
-			await saveTransaction(_comment.text, Decimal.parse(_amount.text), _isBusiness, _isBorrowed, null, origin, target, []);
+			await saveTransaction(_comment.text, Decimal.parse(_amount.text), _isBusiness, _isBorrowed, null, origin, target,_tags.selectedItems);
                             Navigator.of(context).pop();
                           },
 	)]))])));

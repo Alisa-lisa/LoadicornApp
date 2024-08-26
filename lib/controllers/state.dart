@@ -5,7 +5,7 @@ class CustomCache extends Cubit<Map<String, dynamic>> {
 	CustomCache(): super({});
 
 	void update(String key, dynamic value) {
-	    state[key] = value;
+	    state[key].add(value);
 	    emit(state);
 	  }
 

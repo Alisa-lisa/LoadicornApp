@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:loadiapp/controllers/tags.dart';
 import 'package:loadiapp/models/account.dart';
+import 'package:loadiapp/models/tag.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
 import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
@@ -10,9 +12,10 @@ import 'package:loadiapp/controllers/accounts.dart';
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
 	List<Account> accs = await fetchAccounts();
+	List<Tag> tags = await fetchTags();
 	CustomCache cache = CustomCache();
 	cache.add({"accounts": accs});
-	
+	cache.add({"tags": tags});
   runApp( MyApp(
 		  cache: cache
 		  ));
@@ -91,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return const TagDialog();
+                          return TagDialog(cache: cache);
                         });
                   }),
 		SpeedDialChild(

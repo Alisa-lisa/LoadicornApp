@@ -15,12 +15,10 @@ Future<http.Response> createAccount(
 	String url = format("{}/register?comment={}&acc_type={}&balance={}", baseUri, comment, type.toUpperCase(), balance);
 
 	var resp = http.post(Uri.parse(url));
-	print(resp);
 	return resp;
 }
 
 Future<List<Account>> fetchAccounts() async {
-	List<Account> res = [];
 	String url = format('{}/list', baseUri);
 	var resp = await http.get(Uri.parse(url));
 	if (resp.statusCode == 200) {
