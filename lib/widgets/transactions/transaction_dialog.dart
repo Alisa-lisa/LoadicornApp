@@ -7,6 +7,7 @@ import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/transactions.dart';
 import 'package:loadiapp/models/account.dart';
 import 'package:loadiapp/models/tag.dart';
+import 'package:loadiapp/widgets/misc.dart';
 
 class TransactionDialog extends StatefulWidget {
   final CustomCache cache;
@@ -76,23 +77,6 @@ class TransactionDialogState extends State<TransactionDialog> {
     _comment.clear();
   }
 
-  Widget getRowElement(double width, Widget header, Widget child) {
-    return SizedBox(
-        width: width * 0.8,
-        child: Row(children: [
-          Expanded(
-              flex: 2,
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-                  child: header)),
-          Expanded(
-              flex: 8,
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2, 5, 2),
-                  child: SizedBox(width: width * 0.3, child: child)))
-        ]));
-  }
-
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -126,6 +110,7 @@ class TransactionDialogState extends State<TransactionDialog> {
                 SizedBox(
                   height: height * 0.01,
                 ),
+
                 getRowElement(
                     width,
                     const Text('Amount:'),
@@ -235,7 +220,7 @@ class TransactionDialogState extends State<TransactionDialog> {
                 ]),
                 getRowElement(
                     width,
-                    Text("Tags:"),
+                    const Text("Tags:"),
                     SizedBox(
                         width: width * 0.6,
                         child: MultiDropdown<Tag>(
