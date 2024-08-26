@@ -25,8 +25,9 @@ class TransactionDialogState extends State<TransactionDialog> {
   final MultiSelectController<Tag> _tags = MultiSelectController<Tag>();
   String? origin;
   String? target;
-  bool _isBusiness = false;
-  bool _isBorrowed = false;
+  bool isIncoming = false;
+  bool isBusiness = false;
+  bool isBorrowed = false;
 
   @override
   void initState() {
@@ -60,6 +61,7 @@ class TransactionDialogState extends State<TransactionDialog> {
   Future<void> saveTransaction(
       String comment,
       Decimal amount,
+      bool isIncoming,
       bool isBusiness,
       bool isBorrowed,
       String? parentTransaction,
@@ -70,8 +72,9 @@ class TransactionDialogState extends State<TransactionDialog> {
     taggos.addAll(tags.map((DropdownItem<Tag> t) {
       return t.value.id;
     }).toList());
-    var res = await createTransaction(
-        comment, amount, isBusiness, isBorrowed, null, origin, target, taggos);
+    Decimal tAmount = isIncoming == false ? -amount : amount;
+    await createTransaction(
+        comment, tAmount, isBusiness, isBorrowed, null, origin, target, taggos);
     _tags.clearAll();
     _amount.clear();
     _comment.clear();
@@ -83,6 +86,10 @@ class TransactionDialogState extends State<TransactionDialog> {
     var height = MediaQuery.of(context).size.height;
     List<DropdownMenuItem<String>> ddItems = getAccounts();
     List<DropdownItem<Tag>> tagsItems = prepareTags();
+    Color outgoingColor = isIncoming == false ? Colors.red : Colors.grey;
+    Color incomingColor = isIncoming == true ? Colors.red : Colors.grey;
+    Color isBorrowedColor = isBorrowed == false ? Colors.grey : Colors.red;
+    Color isBusinessColor = isBusiness == false ? Colors.grey : Colors.red;
     return Dialog(
         child: SingleChildScrollView(
             child: Stack(children: [
@@ -106,11 +113,36 @@ class TransactionDialogState extends State<TransactionDialog> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Text("New Transaction"),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-
+                const Text("New Transaction", style: TextStyle(fontSize: 16)),
+                Row(children: [
+                  Expanded(
+                      flex: 3,
+                      child: InkWell(
+                          child: Icon(Icons.arrow_upward, color: outgoingColor),
+                          onTap: () {
+                            setState(() {
+                              if (outgoingColor == Colors.grey) {
+                                outgoingColor = Colors.red;
+                                incomingColor = Colors.grey;
+                                isIncoming = false;
+                              }
+                            });
+                          })),
+                  Expanded(
+                      flex: 3,
+                      child: InkWell(
+                          child:
+                              Icon(Icons.arrow_downward, color: incomingColor),
+                          onTap: () {
+                            setState(() {
+                              if (incomingColor == Colors.grey) {
+                                outgoingColor = Colors.grey;
+                                incomingColor = Colors.red;
+                                isIncoming = true;
+                              }
+                            });
+                          })),
+                ]),
                 getRowElement(
                     width,
                     const Text('Amount:'),
@@ -174,7 +206,7 @@ class TransactionDialogState extends State<TransactionDialog> {
                                 fontSize: 14, color: Colors.black),
                             hint: const Text("Account"),
                             focusColor: Colors.grey,
-                            value: origin,
+                            value: target,
                             items: ddItems,
                             alignment: Alignment.center,
                             onChanged: (String? value) {
@@ -198,25 +230,26 @@ class TransactionDialogState extends State<TransactionDialog> {
                             controller: _comment,
                             textAlign: TextAlign.center))),
                 Row(children: [
-                  const Text("is business"),
-                  InkWell(
-                      child: const Icon(Icons.add_business, color: Colors.grey),
-                      onTap: () {
-                        setState(() {
-                          _isBusiness != _isBusiness;
-                        });
-                      })
-                ]),
-                Row(children: [
-                  const Text("is borrowed"),
-                  InkWell(
-                      child:
-                          const Icon(Icons.account_balance, color: Colors.grey),
-                      onTap: () {
-                        setState(() {
-                          _isBorrowed != _isBorrowed;
-                        });
-                      })
+                  Expanded(
+                      flex: 3,
+                      child: InkWell(
+                          child:
+                              Icon(Icons.add_business, color: isBusinessColor),
+                          onTap: () {
+                            setState(() {
+                              isBusiness = !isBusiness;
+                            });
+                          })),
+                  Expanded(
+                      flex: 3,
+                      child: InkWell(
+                          child: Icon(Icons.account_balance,
+                              color: isBorrowedColor),
+                          onTap: () {
+                            setState(() {
+                              isBorrowed = !isBorrowed;
+                            });
+                          })),
                 ]),
                 getRowElement(
                     width,
@@ -247,8 +280,9 @@ class TransactionDialogState extends State<TransactionDialog> {
                     await saveTransaction(
                         _comment.text,
                         Decimal.parse(_amount.text),
-                        _isBusiness,
-                        _isBorrowed,
+                        isIncoming,
+                        isBusiness,
+                        isBorrowed,
                         null,
                         origin,
                         target,
