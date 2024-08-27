@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/tags.dart';
 import 'package:loadiapp/widgets/misc.dart';
+import 'package:loadiapp/models/tag.dart';
 
 class TagDialog extends StatefulWidget {
   final CustomCache cache;
@@ -21,7 +22,7 @@ class TagDialogState extends State<TagDialog> {
     super.initState();
   }
 
-  Future<bool> _createTag(String name, String description) async {
+  Future<Tag> _createTag(String name, String description) async {
     var res = await createTag(name, description);
     return res;
   }
@@ -79,9 +80,10 @@ class TagDialogState extends State<TagDialog> {
                   ),
                   child: const Text("Save"),
                   onPressed: () async {
-                    await _createTag(_name.text, _description.text);
+                    Tag newTag =
+                        await _createTag(_name.text, _description.text);
                     setState(() {
-                      // cache.update("tags", );
+                      cache.update("tags", newTag);
                     });
                     _name.clear();
                     _description.clear();

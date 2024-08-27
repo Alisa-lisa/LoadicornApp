@@ -10,19 +10,17 @@ import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/accounts.dart';
 
 void main() async {
-	WidgetsFlutterBinding.ensureInitialized();
-	List<Account> accs = await fetchAccounts();
-	List<Tag> tags = await fetchTags();
-	CustomCache cache = CustomCache();
-	cache.add({"accounts": accs});
-	cache.add({"tags": tags});
-  runApp( MyApp(
-		  cache: cache
-		  ));
+  WidgetsFlutterBinding.ensureInitialized();
+  List<Account> accs = await fetchAccounts();
+  List<Tag> tags = await fetchTags();
+  CustomCache cache = CustomCache();
+  cache.add({"accounts": accs});
+  cache.add({"tags": tags});
+  runApp(MyApp(cache: cache));
 }
 
 class MyApp extends StatelessWidget {
-	final CustomCache cache;
+  final CustomCache cache;
 
   const MyApp({required this.cache, super.key});
 
@@ -40,42 +38,42 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-	final CustomCache cache;
-	final String title;
+  final CustomCache cache;
+  final String title;
   const MyHomePage({super.key, required this.title, required this.cache});
-
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-	CustomCache get cache => widget.cache;
+  CustomCache get cache => widget.cache;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Here last 5 transactions would be shown',
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
-          ],
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
-	floatingActionButton: SpeedDial(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Here last 5 transactions would be shown',
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterFloat,
+        floatingActionButton: SpeedDial(
             icon: Icons.add_outlined,
             backgroundColor: Colors.lightBlue.shade100,
             children: [
-		SpeedDialChild(
+              SpeedDialChild(
                   child: const Icon(Icons.credit_card),
                   label: 'Account',
                   backgroundColor: Colors.lightBlue.shade100,
@@ -83,10 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return const AccountDialog();
+                          return AccountDialog(cache: cache);
                         });
                   }),
-		SpeedDialChild(
+              SpeedDialChild(
                   child: const Icon(Icons.construction),
                   label: 'Tag',
                   backgroundColor: Colors.lightBlue.shade300,
@@ -97,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           return TagDialog(cache: cache);
                         });
                   }),
-		SpeedDialChild(
+              SpeedDialChild(
                   child: const Icon(Icons.attach_money),
                   label: 'Transaction',
                   backgroundColor: Colors.lightBlue.shade500,
@@ -108,9 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           return TransactionDialog(cache: cache);
                         });
                   }),
-
-	    ]
-	    )
-          );
+            ]));
   }
 }

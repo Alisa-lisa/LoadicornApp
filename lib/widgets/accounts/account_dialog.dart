@@ -3,16 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:decimal/decimal.dart';
 
 import 'package:loadiapp/controllers/accounts.dart';
+import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/widgets/misc.dart';
+import 'package:loadiapp/models/account.dart';
 
 class AccountDialog extends StatefulWidget {
-  const AccountDialog({super.key});
+  final CustomCache cache;
+  const AccountDialog({super.key, required this.cache});
 
   @override
   AccountDialogState createState() => AccountDialogState();
 }
 
 class AccountDialogState extends State<AccountDialog> {
+  CustomCache get cache => widget.cache;
   final TextEditingController _comment = TextEditingController();
   final TextEditingController _amount = TextEditingController();
   String? _type;
@@ -22,11 +26,12 @@ class AccountDialogState extends State<AccountDialog> {
     super.initState();
   }
 
-  Future<void> _createNewAccount(
+  Future<Account> _createNewAccount(
       String comment, String type, Decimal amount) async {
-    await createAccount(comment, type, amount);
+    Account res = await createAccount(comment, type, amount);
     _comment.clear();
     _amount.clear();
+    return res;
   }
 
   List<DropdownMenuItem<String>> getAccountType() {
@@ -68,7 +73,7 @@ class AccountDialogState extends State<AccountDialog> {
               const Text("New Account"),
               getRowElement(
                   width,
-                  Text("Balance:"),
+                  const Text("Balance:"),
                   TextField(
                       decoration:
                           const InputDecoration(border: OutlineInputBorder()),
@@ -123,8 +128,9 @@ class AccountDialogState extends State<AccountDialog> {
                 ),
                 child: const Text("Save"),
                 onPressed: () async {
-                  await _createNewAccount(
+                  Account res = await _createNewAccount(
                       _comment.text, _type!, Decimal.parse(_amount.text));
+                  cache.update("accounts", res);
                   Navigator.of(context).pop();
                 },
               )
