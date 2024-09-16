@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:loadiapp/controllers/tags.dart';
 import 'package:loadiapp/models/account.dart';
 import 'package:loadiapp/models/tag.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
@@ -8,14 +7,18 @@ import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
 import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/accounts.dart';
+import 'package:loadiapp/controllers/analytics.dart';
+import 'package:loadiapp/controllers/tags.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   List<Account> accs = await fetchAccounts();
   List<Tag> tags = await fetchTags();
+  String total = await getTotal();
   CustomCache cache = CustomCache();
   cache.add({"accounts": accs});
   cache.add({"tags": tags});
+  cache.add({"total": total});
   runApp(MyApp(cache: cache));
 }
 
@@ -53,9 +56,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
-        ),
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: Text(widget.title),
+            actions: <Widget>[Text(cache.state['total'])]),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         context: context,
                         builder: (context) {
                           return AccountDialog(cache: cache);
-                        });
+                        }).then((_) {
+                      setState(() {});
+                    });
                   }),
               SpeedDialChild(
                   child: const Icon(Icons.construction),
@@ -93,7 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         context: context,
                         builder: (context) {
                           return TagDialog(cache: cache);
-                        });
+                        }).then((_) {
+                      setState(() {});
+                    });
                   }),
               SpeedDialChild(
                   child: const Icon(Icons.attach_money),
@@ -104,7 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         context: context,
                         builder: (context) {
                           return TransactionDialog(cache: cache);
-                        });
+                        }).then((_) {
+                      setState(() {});
+                    });
                   }),
             ]));
   }
