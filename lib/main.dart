@@ -1,3 +1,4 @@
+import 'package:format/format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loadiapp/models/account.dart';
@@ -5,6 +6,7 @@ import 'package:loadiapp/models/tag.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
 import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
+import 'package:loadiapp/widgets/analytics.dart';
 import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/accounts.dart';
 import 'package:loadiapp/controllers/analytics.dart';
@@ -15,10 +17,16 @@ void main() async {
   List<Account> accs = await fetchAccounts();
   List<Tag> tags = await fetchTags();
   String total = await getTotal();
+  List<Map<String, List<String>>> totalTrend = await collectTotalTrend();
+  Map<String, double> monthlyStructure = await collectMontlyStructure();
+  Map<String, Map<String, double>> accountTrend = await collectAccountTrend();
   CustomCache cache = CustomCache();
   cache.add({"accounts": accs});
   cache.add({"tags": tags});
   cache.add({"total": total});
+  cache.add({"totalTrend": totalTrend});
+  cache.add({"accountTrend": accountTrend});
+  cache.add({"monthlyStructure": monthlyStructure});
   runApp(MyApp(cache: cache));
 }
 
@@ -54,21 +62,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    DateTime today = DateTime.now();
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             title: Text(widget.title),
             actions: <Widget>[Text(cache.state['total'])]),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Here last 5 transactions would be shown',
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-            ],
-          ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(format("Cost structure for {}-{}", today.year, today.month)),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: SizedBox(
+                    width: width * 0.95,
+                    height: height * 0.3,
+                    child: prepareMonthlyStructureBar(
+                        cache.state['monthlyStructure']))),
+            const Text("Monthly trend"),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: SizedBox(
+                    width: width * 0.95,
+                    height: height * 0.3,
+                    child: prepareTotalTrendBar(cache.state["totalTrend"]))),
+          ],
         ),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterFloat,
