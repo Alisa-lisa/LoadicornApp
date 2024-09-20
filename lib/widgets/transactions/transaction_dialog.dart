@@ -1,6 +1,8 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:decimal/decimal.dart';
+import 'package:loadiapp/controllers/analytics.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'package:loadiapp/controllers/state.dart';
@@ -287,6 +289,9 @@ class TransactionDialogState extends State<TransactionDialog> {
                         origin,
                         target,
                         _tags.selectedItems);
+                    String newTotal = await getTotal();
+                    cache.updateSimple("total", newTotal);
+                    setState(() {});
                     Navigator.of(context).pop();
                   },
                 )
