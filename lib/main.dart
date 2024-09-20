@@ -12,6 +12,11 @@ import 'package:loadiapp/controllers/accounts.dart';
 import 'package:loadiapp/controllers/analytics.dart';
 import 'package:loadiapp/controllers/tags.dart';
 
+const style = TextStyle(
+  fontWeight: FontWeight.bold,
+  fontSize: 12,
+);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   List<Account> accs = await fetchAccounts();
@@ -19,13 +24,11 @@ void main() async {
   String total = await getTotal();
   List<Map<String, List<String>>> totalTrend = await collectTotalTrend();
   Map<String, double> monthlyStructure = await collectMontlyStructure();
-  Map<String, Map<String, double>> accountTrend = await collectAccountTrend();
   CustomCache cache = CustomCache();
   cache.add({"accounts": accs});
   cache.add({"tags": tags});
   cache.add({"total": total});
   cache.add({"totalTrend": totalTrend});
-  cache.add({"accountTrend": accountTrend});
   cache.add({"monthlyStructure": monthlyStructure});
   runApp(MyApp(cache: cache));
 }
@@ -69,11 +72,16 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             title: Text(widget.title),
-            actions: <Widget>[Text(cache.state['total'])]),
+            actions: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: Text(cache.state['total'], style: style))
+            ]),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(format("Cost structure for {}-{}", today.year, today.month)),
+            Text(format("Cost structure for {}-{}", today.year, today.month),
+                style: style),
             Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: SizedBox(
@@ -81,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: height * 0.3,
                     child: prepareMonthlyStructureBar(
                         cache.state['monthlyStructure']))),
-            const Text("Monthly trend"),
+            const Text("Monthly trend", style: style),
             Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: SizedBox(

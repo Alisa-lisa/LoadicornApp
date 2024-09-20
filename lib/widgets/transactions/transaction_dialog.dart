@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:decimal/decimal.dart';
@@ -291,6 +290,12 @@ class TransactionDialogState extends State<TransactionDialog> {
                         _tags.selectedItems);
                     String newTotal = await getTotal();
                     cache.updateSimple("total", newTotal);
+                    Map<String, double> newStructure =
+                        await collectMontlyStructure();
+                    cache.updateSimple("monthlyStructure", newStructure);
+                    List<Map<String, List<String>>> newTrend =
+                        await collectTotalTrend();
+                    cache.updateSimple("totalTrend", newTrend);
                     setState(() {});
                     Navigator.of(context).pop();
                   },

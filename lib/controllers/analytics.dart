@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:decimal/decimal.dart';
 import 'package:format/format.dart';
 import 'package:http/http.dart' as http;
 
@@ -9,7 +8,8 @@ Future<String> getTotal() async {
   String url = format("{}/total", baseUri);
   var resp = await http.get(Uri.parse(url));
   if (resp.statusCode == 200) {
-    String res = resp.body.toString().replaceAll('"', '');
+    String res =
+        resp.body.toString().replaceAll('"', '').split(".")[0].toString();
     return res;
   } else {
     throw Exception("Could not collect total");
