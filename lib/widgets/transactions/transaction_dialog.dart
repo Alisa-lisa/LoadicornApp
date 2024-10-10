@@ -294,8 +294,8 @@ class TransactionDialogState extends State<TransactionDialog> {
                         await collectMontlyStructure();
                     cache.updateSimple("monthlyStructure", newStructure);
                     List<Map<String, List<String>>> newTrend =
-                        await collectTotalTrend();
-                    cache.updateSimple("totalTrend", newTrend);
+                        await collectMonthlyTrend();
+                    cache.updateSimple("monthlyTrend", newTrend);
                     setState(() {});
                     Navigator.of(context).pop();
                   },

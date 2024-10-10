@@ -22,13 +22,13 @@ void main() async {
   List<Account> accs = await fetchAccounts();
   List<Tag> tags = await fetchTags();
   String total = await getTotal();
-  List<Map<String, List<String>>> totalTrend = await collectTotalTrend();
+  List<Map<String, List<String>>> monthlyTrend = await collectMonthlyTrend();
   Map<String, double> monthlyStructure = await collectMontlyStructure();
   CustomCache cache = CustomCache();
   cache.add({"accounts": accs});
   cache.add({"tags": tags});
   cache.add({"total": total});
-  cache.add({"totalTrend": totalTrend});
+  cache.add({"monthlyTrend": monthlyTrend});
   cache.add({"monthlyStructure": monthlyStructure});
   runApp(MyApp(cache: cache));
 }
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: SizedBox(
                     width: width * 0.95,
                     height: height * 0.3,
-                    child: prepareTotalTrendBar(cache.state["totalTrend"]))),
+                    child: prepareTotalTrendBar(cache.state["monthlyTrend"]))),
           ],
         ),
         floatingActionButtonLocation:

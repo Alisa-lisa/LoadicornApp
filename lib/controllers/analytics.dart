@@ -16,7 +16,8 @@ Future<String> getTotal() async {
   }
 }
 
-Future<List<Map<String, List<String>>>> collectTotalTrend() async {
+/// Backend call to collect aggregated in/out numbers per month for all accounts
+Future<List<Map<String, List<String>>>> collectMonthlyTrend() async {
   String url = format("{}/total_trend", baseUri);
   var resp = await http.get(Uri.parse(url));
   if (resp.statusCode == 200) {
@@ -35,25 +36,6 @@ Future<List<Map<String, List<String>>>> collectTotalTrend() async {
   }
 }
 
-Future<Map<String, Map<String, double>>> collectAccountTrend() async {
-  String url = format("{}/account_trend", baseUri);
-  var resp = await http.get(Uri.parse(url));
-  if (resp.statusCode == 200) {
-    Map<String, Map<String, double>> res = {};
-    Map<String, dynamic> payload = jsonDecode(resp.body);
-    res = payload.map((k, v) {
-      return MapEntry(
-          k,
-          (v as Map<String, dynamic>).map((ik, iv) {
-            return MapEntry(ik.trim(), -double.parse(iv.toString()));
-          }));
-    });
-    return res;
-  } else {
-    throw Exception("Could not collect structure");
-  }
-}
-
 Future<Map<String, double>> collectMontlyStructure() async {
   // TBD: for now only current month
   String url =
@@ -69,3 +51,23 @@ Future<Map<String, double>> collectMontlyStructure() async {
     throw Exception("Could not collect monthly structure");
   }
 }
+
+// Future<Map<String, Map<String, double>>> collectAccountTrend() async {
+//   String url = format("{}/account_trend", baseUri);
+//   var resp = await http.get(Uri.parse(url));
+//   if (resp.statusCode == 200) {
+//     Map<String, Map<String, double>> res = {};
+//     Map<String, dynamic> payload = jsonDecode(resp.body);
+//     res = payload.map((k, v) {
+//       return MapEntry(
+//           k,
+//           (v as Map<String, dynamic>).map((ik, iv) {
+//             return MapEntry(ik.trim(), -double.parse(iv.toString()));
+//           }));
+//     });
+//     return res;
+//   } else {
+//     throw Exception("Could not collect structure");
+//   }
+// }
+//
