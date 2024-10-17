@@ -20,7 +20,7 @@ Map<String, Color> tg = {
   "eatOut": Colors.amber[600]!,
   "present": Colors.purpleAccent[400]!,
   "home": Colors.indigo[300]!,
-  "transport": Colors.grey,
+  "transport": Colors.cyanAccent[700]!,
   "health": Colors.red[600]!,
   "hobby": Colors.green[300]!,
   "selfDev": Colors.green[100]!,
@@ -32,8 +32,8 @@ Map<String, Color> tg = {
   "clothes": Colors.deepPurple[200]!,
   "charity": Colors.blueGrey[200]!,
   "service": Colors.brown[100]!,
-  "insurance": Colors.grey,
-  "None": Colors.white
+  "insurance": Colors.deepPurple[700]!,
+  "None": Colors.purple[300]!
 };
 
 Map<String, int> tagsBar = {
@@ -310,4 +310,26 @@ BarChart prepareMonthlyStructureBar(Map<String, double> structure) {
       ),
     ),
   ));
+}
+
+DataTable getReoccuring(Map<String, double> structure) {
+  List<DataColumn> cols = [
+    const DataColumn(label: Expanded(child: Text("Name"))),
+    const DataColumn(label: Expanded(child: Text("Amount")))
+  ];
+  List<DataRow> rows = [];
+  double total = 0.0;
+  for (var obj in structure.entries) {
+    rows.add(DataRow(cells: [
+      DataCell(Text(obj.key.toString())),
+      DataCell(Text(obj.value.toString()))
+    ]));
+    total += obj.value;
+  }
+  rows.add(DataRow(cells: [
+    const DataCell(Text('total')),
+    DataCell(Text(total.toString()))
+  ]));
+
+  return DataTable(columns: cols, rows: rows);
 }

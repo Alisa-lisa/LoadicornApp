@@ -24,12 +24,14 @@ void main() async {
   String total = await getTotal();
   List<Map<String, List<String>>> monthlyTrend = await collectMonthlyTrend();
   Map<String, double> monthlyStructure = await collectMontlyStructure();
+  Map<String, double> monthlyReoccur = await collectReoccuring();
   CustomCache cache = CustomCache();
   cache.add({"accounts": accs});
   cache.add({"tags": tags});
   cache.add({"total": total});
   cache.add({"monthlyTrend": monthlyTrend});
   cache.add({"monthlyStructure": monthlyStructure});
+  cache.add({"reoccur": monthlyReoccur});
   runApp(MyApp(cache: cache));
 }
 
@@ -63,6 +65,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   CustomCache get cache => widget.cache;
 
+  double getTotalMonth() {
+    DateTime now = DateTime.now();
+    String today = format("{}-{}-01", now.year, now.month);
+    double total = -double.parse(cache.state['monthlyTrend'].last[today][0]);
+    double reoccur =
+        cache.state['reoccur'].values.reduce((double a, double b) => a + b);
+    return total < reoccur ? 0.0 : total - reoccur;
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -77,11 +88,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                   child: Text(cache.state['total'], style: style))
             ]),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(format("Cost structure for {}-{}", today.year, today.month),
-                style: style),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: Text(
+                    format(
+                        "Re-occuring expenses {}-{}", today.year, today.month),
+                    style: style)),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: SizedBox(
+                    width: width * 0.95,
+                    height: height * 0.2,
+                    child: getReoccuring(cache.state['reoccur']))),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                child: Text(
+                    format("Cost structure for {}-{}. Total: {}", today.year,
+                        today.month, getTotalMonth()),
+                    style: style)),
             Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: SizedBox(
@@ -97,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: height * 0.3,
                     child: prepareTotalTrendBar(cache.state["monthlyTrend"]))),
           ],
-        ),
+        )),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterFloat,
         floatingActionButton: SpeedDial(

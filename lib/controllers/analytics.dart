@@ -52,6 +52,20 @@ Future<Map<String, double>> collectMontlyStructure() async {
   }
 }
 
+Future<Map<String, double>> collectReoccuring() async {
+  String url = format("{}/reoccuring?date={}", baseUri, DateTime.now());
+  var resp = await http.get(Uri.parse(url));
+  if (resp.statusCode == 200) {
+    Map<String, dynamic> payload = jsonDecode(resp.body);
+    Map<String, double> res = payload.map<String, double>((k, v) {
+      return MapEntry(k, -double.parse(v.toString()));
+    });
+    return res;
+  } else {
+    throw Exception("Re-occuring expenses are not available");
+  }
+}
+
 // Future<Map<String, Map<String, double>>> collectAccountTrend() async {
 //   String url = format("{}/account_trend", baseUri);
 //   var resp = await http.get(Uri.parse(url));
