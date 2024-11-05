@@ -62,15 +62,28 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+bool anyDataPresent(List<Map<String, List<String>>> input, DateTime date) {
+  String thisMonth = format("{}-{}-01", date.year, date.month);
+  for (var item in input) {
+    if (item.keys.first == thisMonth) {
+      return true;
+    }
+  }
+  return false;
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   CustomCache get cache => widget.cache;
 
   double getTotalMonth() {
     DateTime now = DateTime.now();
     String today = format("{}-{}-01", now.year, now.month);
-    double total = -double.parse(cache.state['monthlyTrend'].last[today][0]);
-    double reoccur =
-        cache.state['reoccur'].values.reduce((double a, double b) => a + b);
+    double total = anyDataPresent(cache.state['monthlyTrend'], DateTime.now())
+        ? -double.parse(cache.state["monthlyTrend"].last[today][0])
+        : 0.0;
+    double reoccur = !cache.state['reoccur'].isEmpty
+        ? cache.state['reoccur'].values.reduce((double a, double b) => a + b)
+        : 0.0;
     return total < reoccur ? 0.0 : total - reoccur;
   }
 
