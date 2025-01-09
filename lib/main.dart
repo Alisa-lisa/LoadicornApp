@@ -62,8 +62,14 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+String getToday(DateTime date) {
+  String month =
+      date.month < 10 ? format("0{}", date.month) : date.month.toString();
+  return format("{}-{}-01", date.year, month);
+}
+
 bool anyDataPresent(List<Map<String, List<String>>> input, DateTime date) {
-  String thisMonth = format("{}-{}-01", date.year, date.month);
+  String thisMonth = getToday(date);
   for (var item in input) {
     if (item.keys.first == thisMonth) {
       return true;
@@ -77,8 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double getTotalMonth() {
     DateTime now = DateTime.now();
-    String today = format("{}-{}-01", now.year, now.month);
-    double total = anyDataPresent(cache.state['monthlyTrend'], DateTime.now())
+    String today = getToday(now);
+    bool haveData = anyDataPresent(cache.state['monthlyTrend'], now);
+    double total = haveData
         ? -double.parse(cache.state["monthlyTrend"].last[today][0])
         : 0.0;
     double reoccur = !cache.state['reoccur'].isEmpty

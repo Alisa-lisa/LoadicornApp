@@ -65,23 +65,3 @@ Future<Map<String, double>> collectReoccuring() async {
     throw Exception("Re-occuring expenses are not available");
   }
 }
-
-// Future<Map<String, Map<String, double>>> collectAccountTrend() async {
-//   String url = format("{}/account_trend", baseUri);
-//   var resp = await http.get(Uri.parse(url));
-//   if (resp.statusCode == 200) {
-//     Map<String, Map<String, double>> res = {};
-//     Map<String, dynamic> payload = jsonDecode(resp.body);
-//     res = payload.map((k, v) {
-//       return MapEntry(
-//           k,
-//           (v as Map<String, dynamic>).map((ik, iv) {
-//             return MapEntry(ik.trim(), -double.parse(iv.toString()));
-//           }));
-//     });
-//     return res;
-//   } else {
-//     throw Exception("Could not collect structure");
-//   }
-// }
-//
