@@ -99,7 +99,7 @@ class TransactionDialogState extends State<TransactionDialog> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3), // Shadow color
+                color: Colors.black.withAlpha(30), // Shadow color
                 spreadRadius: 2, // How wide the shadow spreads
                 blurRadius: 10, // How blurry the shadow is
                 offset: const Offset(2, 4), // The position of the shadow (x, y)
@@ -144,92 +144,98 @@ class TransactionDialogState extends State<TransactionDialog> {
                             });
                           })),
                 ]),
-                getRowElement(
-                    width,
-                    const Text('Amount:'),
-                    TextField(
-                        decoration:
-                            const InputDecoration(border: OutlineInputBorder()),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d*\.?\d*')),
-                        ],
-                        controller: _amount,
-                        textAlign: TextAlign.center)),
-                // const Text("Incoming/Outgoing/Transfer"),
-                getRowElement(
-                    width,
-                    const Text("Origin:"),
-                    Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.purple,
-                              width: 1.0), // Border around the DropdownButton
-                          borderRadius: BorderRadius.circular(
-                              2.0), // Optional: adds rounded corners
-                        ),
-                        child: DropdownButton<String>(
-                            isExpanded: true,
-                            underline: Container(),
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.black),
-                            hint: const Text("Account"),
-                            focusColor: Colors.grey,
-                            value: origin,
-                            items: ddItems,
-                            alignment: Alignment.center,
-                            onChanged: (String? value) {
-                              setState(() {
-                                if (value == "none") {
-                                  origin = null;
-                                } else {
-                                  origin = value!;
-                                }
-                              });
-                            }))),
-                getRowElement(
-                    width,
-                    const Text("Target:"),
-                    Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.purple,
-                              width: 1.0), // Border around the DropdownButton
-                          borderRadius: BorderRadius.circular(
-                              2.0), // Optional: adds rounded corners
-                        ),
-                        child: DropdownButton<String>(
-                            isExpanded: true,
-                            underline: Container(),
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.black),
-                            hint: const Text("Account"),
-                            focusColor: Colors.grey,
-                            value: target,
-                            items: ddItems,
-                            alignment: Alignment.center,
-                            onChanged: (String? value) {
-                              setState(() {
-                                if (value == "none") {
-                                  target = null;
-                                } else {
-                                  target = value!;
-                                }
-                              });
-                            }))),
-                // const Text("Parent"),  // update in db for now if needed
-                getRowElement(
-                    width,
-                    const Text("Comment:", style: TextStyle(fontSize: 11)),
-                    SizedBox(
-                        width: width * 0.3,
-                        child: TextField(
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text('Amount:'),
+                        TextField(
                             decoration: const InputDecoration(
                                 border: OutlineInputBorder()),
-                            controller: _comment,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d*')),
+                            ],
+                            controller: _amount,
                             textAlign: TextAlign.center))),
+                // const Text("Incoming/Outgoing/Transfer"),
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text("Origin:"),
+                        Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.purple,
+                                  width:
+                                      1.0), // Border around the DropdownButton
+                              borderRadius: BorderRadius.circular(
+                                  2.0), // Optional: adds rounded corners
+                            ),
+                            child: DropdownButton<String>(
+                                isExpanded: true,
+                                underline: Container(),
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                                hint: const Text("Account"),
+                                focusColor: Colors.grey,
+                                value: origin,
+                                items: ddItems,
+                                alignment: Alignment.center,
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    if (value == "none") {
+                                      origin = null;
+                                    } else {
+                                      origin = value!;
+                                    }
+                                  });
+                                })))),
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text("Target:"),
+                        Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.purple,
+                                  width:
+                                      1.0), // Border around the DropdownButton
+                              borderRadius: BorderRadius.circular(
+                                  2.0), // Optional: adds rounded corners
+                            ),
+                            child: DropdownButton<String>(
+                                isExpanded: true,
+                                underline: Container(),
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                                hint: const Text("Account"),
+                                focusColor: Colors.grey,
+                                value: target,
+                                items: ddItems,
+                                alignment: Alignment.center,
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    if (value == "none") {
+                                      target = null;
+                                    } else {
+                                      target = value!;
+                                    }
+                                  });
+                                })))),
+                // const Text("Parent"),  // update in db for now if needed
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text("Comment:", style: TextStyle(fontSize: 11)),
+                        SizedBox(
+                            width: width * 0.3,
+                            child: TextField(
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder()),
+                                controller: _comment,
+                                textAlign: TextAlign.center)))),
                 Row(children: [
                   Expanded(
                       flex: 3,
@@ -252,24 +258,26 @@ class TransactionDialogState extends State<TransactionDialog> {
                             });
                           })),
                 ]),
-                getRowElement(
-                    width,
-                    const Text("Tags:"),
-                    SizedBox(
-                        width: width * 0.6,
-                        child: MultiDropdown<Tag>(
-                          items: tagsItems,
-                          controller: _tags,
-                          enabled: true,
-                          searchEnabled: true,
-                          chipDecoration: const ChipDecoration(
-                            backgroundColor: Colors.yellow,
-                            wrap: true,
-                            runSpacing: 2,
-                            spacing: 10,
-                          ),
-                        ))),
-                TextButton(
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text("Tags:"),
+                        SizedBox(
+                            width: width * 0.6,
+                            child: MultiDropdown<Tag>(
+                              items: tagsItems,
+                              controller: _tags,
+                              enabled: true,
+                              searchEnabled: true,
+                              chipDecoration: const ChipDecoration(
+                                backgroundColor: Colors.yellow,
+                                wrap: true,
+                                runSpacing: 2,
+                                spacing: 10,
+                              ),
+                            )))),
+                Expanded(
+                    child: TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,
                     backgroundColor: Colors.purple.shade50,
@@ -297,9 +305,10 @@ class TransactionDialogState extends State<TransactionDialog> {
                         await collectMonthlyTrend();
                     cache.updateSimple("monthlyTrend", newTrend);
                     setState(() {});
+                    if (!context.mounted) return;
                     Navigator.of(context).pop();
                   },
-                )
+                ))
               ]))
     ])));
   }

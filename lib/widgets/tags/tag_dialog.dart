@@ -39,7 +39,7 @@ class TagDialogState extends State<TagDialog> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3), // Shadow color
+                color: Colors.black.withAlpha(30), // Shadow color
                 spreadRadius: 2, // How wide the shadow spreads
                 blurRadius: 10, // How blurry the shadow is
                 offset: const Offset(2, 4), // The position of the shadow (x, y)
@@ -55,23 +55,26 @@ class TagDialogState extends State<TagDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 const Text("New Tag"),
-                getRowElement(
-                    width,
-                    const Text("Name:"),
-                    TextField(
-                        decoration:
-                            const InputDecoration(border: OutlineInputBorder()),
-                        controller: _name,
-                        textAlign: TextAlign.center)),
-                getRowElement(
-                    width,
-                    const Text("Comment:", style: TextStyle(fontSize: 11)),
-                    TextField(
-                        decoration:
-                            const InputDecoration(border: OutlineInputBorder()),
-                        controller: _description,
-                        textAlign: TextAlign.center)),
-                TextButton(
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text("Name:"),
+                        TextField(
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder()),
+                            controller: _name,
+                            textAlign: TextAlign.center))),
+                Expanded(
+                    child: getRowElement(
+                        width,
+                        const Text("Comment:", style: TextStyle(fontSize: 11)),
+                        TextField(
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder()),
+                            controller: _description,
+                            textAlign: TextAlign.center))),
+                Expanded(
+                    child: TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,
                     backgroundColor: Colors.purple.shade50,
@@ -87,9 +90,10 @@ class TagDialogState extends State<TagDialog> {
                     });
                     _name.clear();
                     _description.clear();
+                    if (!context.mounted) return;
                     Navigator.of(context).pop();
                   },
-                )
+                ))
               ]))
     ])));
   }
