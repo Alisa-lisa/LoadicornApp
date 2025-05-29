@@ -114,7 +114,7 @@ Widget leftTitleWidgets(double value, TitleMeta meta) {
 
 Widget bottomTitleWidgets(double value, TitleMeta meta) {
   return SideTitleWidget(
-    axisSide: meta.axisSide,
+    meta: meta,
     child: getMonthlyLabel(value),
   );
 }
@@ -218,7 +218,7 @@ BarChart prepareTotalTrendBar(List<Map<String, List<String>>> trend) {
               getTitlesWidget: (double value, TitleMeta meta) {
                 DateTime date = DateTime.parse(trend[value.toInt()].keys.first);
                 return SideTitleWidget(
-                    axisSide: meta.axisSide,
+                    meta: meta,
                     space: 8.0, // space between the chart and the title
                     child: getMonthlyLabel(date.month.toDouble()));
               }),
@@ -302,7 +302,7 @@ BarChart prepareMonthlyStructureBar(Map<String, double> structure) {
                 .key;
             // final String category = structure.keys.elementAt(value.toInt());
             return SideTitleWidget(
-              axisSide: meta.axisSide,
+              meta: meta,
               child: Text(cat, style: const TextStyle(fontSize: 5)),
             );
           },

@@ -1,9 +1,16 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:decimal/decimal.dart';
 import 'package:format/format.dart';
 import 'package:http/http.dart' as http;
 
-const String baseUri = "https://finance.analyticorn.com/transactions";
+String? base = dotenv.env["SERVER"];
+String? auth = dotenv.env["AUTH"];
+String baseUri = format("{}/transactions", base!);
+Map<String, String> headers = {
+  'Content-Type': 'application/json',
+  'access': auth!,
+};
 
 Future<String> createTransaction(
     String comment,
@@ -24,9 +31,6 @@ Future<String> createTransaction(
     'origin_account': originAcc,
     'target_account': targetAcc,
     'tags': tags
-  };
-  Map<String, String> headers = {
-    'Content-Type': 'application/json',
   };
   var resp = await http.post(Uri.parse(url),
       body: jsonEncode(payload), headers: headers);
