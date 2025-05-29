@@ -26,5 +26,8 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
+
 # custom
 openapi.json
+android/
+android/**
