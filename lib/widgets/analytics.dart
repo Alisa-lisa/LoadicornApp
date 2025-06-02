@@ -328,7 +328,14 @@ DataTable getReoccuring(Map<String, double> structure) {
   }
   rows.add(DataRow(cells: [
     const DataCell(Text('total')),
-    DataCell(Text(total.toString()))
+    DataCell(Text(
+      total.toString(),
+      style: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Colors.red,
+      ),
+    ))
   ]));
 
   return DataTable(columns: cols, rows: rows);
