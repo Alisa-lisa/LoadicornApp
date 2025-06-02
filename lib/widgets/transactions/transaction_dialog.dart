@@ -29,6 +29,7 @@ class TransactionDialogState extends State<TransactionDialog> {
   bool isIncoming = false;
   bool isBusiness = false;
   bool isBorrowed = false;
+  bool isRepeating = false;
 
   @override
   void initState() {
@@ -65,6 +66,7 @@ class TransactionDialogState extends State<TransactionDialog> {
       bool isIncoming,
       bool isBusiness,
       bool isBorrowed,
+      bool isRepeating,
       String? parentTransaction,
       String? origin,
       String? target,
@@ -74,8 +76,8 @@ class TransactionDialogState extends State<TransactionDialog> {
       return t.value.id;
     }).toList());
     Decimal tAmount = isIncoming == false ? -amount : amount;
-    await createTransaction(
-        comment, tAmount, isBusiness, isBorrowed, null, origin, target, taggos);
+    await createTransaction(comment, tAmount, isBusiness, isBorrowed,
+        isRepeating, null, origin, target, taggos);
     _tags.clearAll();
     _amount.clear();
     _comment.clear();
@@ -89,6 +91,7 @@ class TransactionDialogState extends State<TransactionDialog> {
     List<DropdownItem<Tag>> tagsItems = prepareTags();
     Color outgoingColor = isIncoming == false ? Colors.red : Colors.grey;
     Color incomingColor = isIncoming == true ? Colors.red : Colors.grey;
+    Color isRepeatingColor = isRepeating == true ? Colors.red : Colors.grey;
     Color isBorrowedColor = isBorrowed == false ? Colors.grey : Colors.red;
     Color isBusinessColor = isBusiness == false ? Colors.grey : Colors.red;
     return Dialog(
@@ -159,7 +162,6 @@ class TransactionDialogState extends State<TransactionDialog> {
                             ],
                             controller: _amount,
                             textAlign: TextAlign.center))),
-                // const Text("Incoming/Outgoing/Transfer"),
                 Expanded(
                     child: getRowElement(
                         width,
@@ -224,7 +226,6 @@ class TransactionDialogState extends State<TransactionDialog> {
                                     }
                                   });
                                 })))),
-                // const Text("Parent"),  // update in db for now if needed
                 Expanded(
                     child: getRowElement(
                         width,
@@ -240,21 +241,10 @@ class TransactionDialogState extends State<TransactionDialog> {
                   Expanded(
                       flex: 3,
                       child: InkWell(
-                          child:
-                              Icon(Icons.add_business, color: isBusinessColor),
+                          child: Icon(Icons.cached, color: isRepeatingColor),
                           onTap: () {
                             setState(() {
-                              isBusiness = !isBusiness;
-                            });
-                          })),
-                  Expanded(
-                      flex: 3,
-                      child: InkWell(
-                          child: Icon(Icons.account_balance,
-                              color: isBorrowedColor),
-                          onTap: () {
-                            setState(() {
-                              isBorrowed = !isBorrowed;
+                              isRepeating = !isRepeating;
                             });
                           })),
                 ]),
@@ -292,6 +282,7 @@ class TransactionDialogState extends State<TransactionDialog> {
                         isIncoming,
                         isBusiness,
                         isBorrowed,
+                        isRepeating,
                         null,
                         origin,
                         target,
