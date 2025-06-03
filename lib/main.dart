@@ -34,6 +34,7 @@ void main() async {
   cache.add({"monthlyTrend": monthlyTrend});
   cache.add({"monthlyStructure": monthlyStructure});
   cache.add({"reoccur": monthlyReoccur});
+  cache.add({"special": false});
   runApp(MyApp(cache: cache));
 }
 
@@ -82,6 +83,7 @@ bool anyDataPresent(List<Map<String, List<String>>> input, DateTime date) {
 
 class _MyHomePageState extends State<MyHomePage> {
   CustomCache get cache => widget.cache;
+  bool specialPresent = false; // TODO: proper check
 
   double getTotalMonth() {
     DateTime now = DateTime.now();
@@ -126,6 +128,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: width * 0.95,
                     height: height * 0.2,
                     child: getReoccuring(cache.state['reoccur']))),
+            // if (specialPresent == true){
+            //   return Column(children: [
+            //   Padding(
+            //       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+            //       child: Text(
+            //           format("Special expenses {}-{}", today.year, today.month),
+            //           style: style)),
+            // Padding(
+            //     padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            //     child: SizedBox(
+            //         width: width * 0.95,
+            //         height: height * 0.2,
+            //         child: getReoccuring(cache.state['special']))),
+            //   ]);},
+
             Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                 child: Text(
