@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:decimal/decimal.dart';
+import 'package:loadiapp/const.dart';
 import 'package:loadiapp/controllers/analytics.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
@@ -320,7 +321,7 @@ class TransactionDialogState extends State<TransactionDialog> {
                         await collectMontlyStructure();
                     cache.updateSimple("monthlyStructure", newStructure);
                     List<Map<String, List<String>>> newTrend =
-                        await collectMonthlyTrend();
+                        await collectMonthlyTrend(trendMonths);
                     cache.updateSimple("monthlyTrend", newTrend);
                     setState(() {});
                     if (!context.mounted) return;
