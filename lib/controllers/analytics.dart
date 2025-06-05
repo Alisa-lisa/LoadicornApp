@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:format/format.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:loadiapp/const.dart';
 
 String? base = dotenv.env["SERVER"];
 String? auth = dotenv.env["AUTH"];
@@ -59,8 +60,9 @@ Future<Map<String, double>> collectMontlyStructure() async {
   }
 }
 
-Future<Map<String, double>> collectReoccuring() async {
-  String url = format("{}/reoccuring?date={}", baseUri, DateTime.now());
+Future<Map<String, double>> collectReoccuring(
+    DateTime date, String freq) async {
+  String url = format("{}/special?date={}&frequency={}", baseUri, date, freq);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     Map<String, dynamic> payload = jsonDecode(resp.body);
