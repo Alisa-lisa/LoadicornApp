@@ -26,7 +26,9 @@ void main() async {
   String total = await getTotal();
   List<Map<String, List<String>>> monthlyTrend = await collectMonthlyTrend();
   Map<String, double> monthlyStructure = await collectMontlyStructure();
-  Map<String, double> monthlyReoccur = await collectReoccuring();
+  DateTime now = DateTime.now();
+  Map<String, double> monthlyReoccur = await collectReoccuring(now, "REPEAT");
+  Map<String, double> monthlySpecial = await collectReoccuring(now, "SPECIAL");
   CustomCache cache = CustomCache();
   cache.add({"accounts": accs});
   cache.add({"tags": tags});
@@ -34,7 +36,7 @@ void main() async {
   cache.add({"monthlyTrend": monthlyTrend});
   cache.add({"monthlyStructure": monthlyStructure});
   cache.add({"reoccur": monthlyReoccur});
-  cache.add({"special": false});
+  cache.add({"special": monthlySpecial});
   runApp(MyApp(cache: cache));
 }
 
@@ -83,7 +85,6 @@ bool anyDataPresent(List<Map<String, List<String>>> input, DateTime date) {
 
 class _MyHomePageState extends State<MyHomePage> {
   CustomCache get cache => widget.cache;
-  bool specialPresent = false; // TODO: proper check
   final ScrollController _scroll = ScrollController();
 
   double getTotalMonth() {
@@ -135,6 +136,25 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: getReoccuring(cache.state['reoccur'])))
                 ])),
             const SliverPadding(padding: EdgeInsets.fromLTRB(0, 10, 0, 5)),
+            if (!cache.state['special'].isEmpty)
+              SliverToBoxAdapter(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                        child: Text(
+                            format("Special expenses {}-{}", today.year,
+                                today.month),
+                            style: style)),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                                minHeight: height * 0.2,
+                                maxWidth: width * 0.95),
+                            child: getReoccuring(cache.state['special'])))
+                  ])),
             SliverToBoxAdapter(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
