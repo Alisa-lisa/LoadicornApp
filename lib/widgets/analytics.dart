@@ -172,35 +172,43 @@ List<BarChartGroupData> _buildBarGroups(List<Map<String, List<String>>> data) {
     final values = dateValueMap.values.first;
 
     return BarChartGroupData(
-        x: index, // Use index as the X-axis value
-        barRods: [
-          BarChartRodData(
-            toY: -double.parse(values[0]),
-            color: Colors.red,
-            width: 10,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          BarChartRodData(
-            toY: double.parse(values[1]),
-            color: Colors.green,
-            width: 10,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ],
-        showingTooltipIndicators: [
-          0,
-          // 1
-        ]);
+      x: index, // Use index as the X-axis value
+      barRods: [
+        BarChartRodData(
+          toY: -double.parse(values[0]),
+          color: Colors.red,
+          width: 10,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        BarChartRodData(
+          toY: double.parse(values[1]),
+          color: Colors.green,
+          width: 10,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ],
+      // showingTooltipIndicators: [
+      //   0,
+      //   // 1
+      // ]
+    );
   });
 }
 
 BarChart prepareTotalTrendBar(List<Map<String, List<String>>> trend) {
+  /// Total incoming and outgoing per each month
   return BarChart(BarChartData(
       alignment: BarChartAlignment.spaceEvenly,
       barGroups: _buildBarGroups(trend),
       minY: 0,
       maxY: 8000,
       gridData: const FlGridData(show: true),
+      // barTouchData: BarTouchData(
+      // enabled: true,
+      // touchTooltipData: BarTouchTooltipData(
+      //
+      // ),
+      // ),
       titlesData: FlTitlesData(
         show: true,
         rightTitles: const AxisTitles(
@@ -209,11 +217,9 @@ BarChart prepareTotalTrendBar(List<Map<String, List<String>>> trend) {
         topTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        // leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 20,
               interval: 1,
               getTitlesWidget: (double value, TitleMeta meta) {
                 DateTime date = DateTime.parse(trend[value.toInt()].keys.first);
@@ -291,7 +297,6 @@ BarChart prepareMonthlyStructureBar(Map<String, double> structure) {
       topTitles: const AxisTitles(
         sideTitles: SideTitles(showTitles: false),
       ),
-      // leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -300,7 +305,6 @@ BarChart prepareMonthlyStructureBar(Map<String, double> structure) {
                 .firstWhere((e) => e.value == value.toInt(),
                     orElse: () => const MapEntry("Unknown", 0))
                 .key;
-            // final String category = structure.keys.elementAt(value.toInt());
             return SideTitleWidget(
               meta: meta,
               child: Text(cat, style: const TextStyle(fontSize: 5)),

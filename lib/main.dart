@@ -2,6 +2,7 @@ import 'package:format/format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:loadiapp/const.dart';
 import 'package:loadiapp/models/account.dart';
 import 'package:loadiapp/models/tag.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
@@ -24,7 +25,8 @@ void main() async {
   List<Account> accs = await fetchAccounts();
   List<Tag> tags = await fetchTags();
   String total = await getTotal();
-  List<Map<String, List<String>>> monthlyTrend = await collectMonthlyTrend();
+  List<Map<String, List<String>>> monthlyTrend =
+      await collectMonthlyTrend(trendMonths);
   Map<String, double> monthlyStructure = await collectMontlyStructure();
   DateTime now = DateTime.now();
   Map<String, double> monthlyReoccur = await collectReoccuring(now, "REPEAT");

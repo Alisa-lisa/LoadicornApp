@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:format/format.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:loadiapp/const.dart';
+import 'package:collection/collection.dart';
 
 String? base = dotenv.env["SERVER"];
 String? auth = dotenv.env["AUTH"];
@@ -25,7 +25,7 @@ Future<String> getTotal() async {
 }
 
 /// Backend call to collect aggregated in/out numbers per month for all accounts
-Future<List<Map<String, List<String>>>> collectMonthlyTrend() async {
+Future<List<Map<String, List<String>>>> collectMonthlyTrend(int? limit) async {
   String url = format("{}/total_trend", baseUri);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
@@ -37,6 +37,11 @@ Future<List<Map<String, List<String>>>> collectMonthlyTrend() async {
         values.add(i.toString());
       }
       res.add({item.keys.first.toString(): values});
+    }
+    if (limit != null) {
+      int start = res.length - limit > 0 ? res.length - limit : 0;
+      var sublist = ListSlice(res, start, res.length);
+      return sublist;
     }
     return res;
   } else {
