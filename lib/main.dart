@@ -173,7 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: width * 0.95,
                           height: height * 0.3,
                           child: prepareMonthlyStructureBar(
-                              cache.state['monthlyStructure'])))
+                              cache.state['monthlyStructure'],
+                              cache.state['tags'])))
                 ])),
             const SliverPadding(padding: EdgeInsets.fromLTRB(0, 5, 0, 5)),
             SliverToBoxAdapter(

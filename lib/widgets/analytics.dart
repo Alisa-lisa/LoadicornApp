@@ -1,6 +1,8 @@
 import 'package:decimal/decimal.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:loadiapp/models/tag.dart';
+import 'package:loadiapp/widgets/misc.dart';
 
 // TBD add colors/icons to DBs
 Map<String, Color> accountsColors = {
@@ -14,98 +16,16 @@ Map<String, Color> accountsColors = {
   "revolut private": Colors.indigo[700]!,
   "haspa private": Colors.purple[800]!
 };
+Color noCustomTagColor = Colors.indigo[300]!;
 
-Map<String, Color> tg = {
-  "groceries": Colors.green[600]!,
-  "eatOut": Colors.amber[600]!,
-  "present": Colors.purpleAccent[400]!,
-  "home": Colors.indigo[300]!,
-  "transport": Colors.cyanAccent[700]!,
-  "health": Colors.red[600]!,
-  "hobby": Colors.green[300]!,
-  "selfDev": Colors.green[100]!,
-  "selfCare": Colors.lightBlueAccent[700]!,
-  "vacation": Colors.pinkAccent,
-  "sport": Colors.cyanAccent,
-  "fun": Colors.lightGreenAccent,
-  "social": Colors.cyan[800]!,
-  "clothes": Colors.deepPurple[200]!,
-  "charity": Colors.blueGrey[200]!,
-  "service": Colors.brown[100]!,
-  "insurance": Colors.deepPurple[700]!,
-  "None": Colors.purple[300]!
-};
-
-Map<String, int> tagsBar = {
-  "groceries": 1,
-  "eatOut": 2,
-  "present": 3,
-  "home": 4,
-  "transport": 5,
-  "health": 6,
-  "hobby": 7,
-  "selfDev": 8,
-  "selfCare": 9,
-  "vacation": 10,
-  "sport": 11,
-  "fun": 12,
-  "social": 13,
-  "clothes": 14,
-  "charity": 15,
-  "service": 16,
-  "insurance": 17,
-  "None": 18
-};
-
-const style = TextStyle(
-  fontWeight: FontWeight.bold,
-  fontSize: 8,
-);
-
-Widget getMonthlyLabel(double value) {
-  Widget text;
-  switch ((value.toInt())) {
-    case 1:
-      text = const Text('Jan', style: style);
-      break;
-    case 2:
-      text = const Text('Feb', style: style);
-      break;
-    case 3:
-      text = const Text('Mar', style: style);
-      break;
-    case 4:
-      text = const Text('Apr', style: style);
-      break;
-    case 5:
-      text = const Text('May', style: style);
-      break;
-    case 6:
-      text = const Text('Jun', style: style);
-      break;
-    case 7:
-      text = const Text('Jul', style: style);
-      break;
-    case 8:
-      text = const Text('Aug', style: style);
-      break;
-    case 9:
-      text = const Text('Sep', style: style);
-      break;
-    case 10:
-      text = const Text('Oct', style: style);
-      break;
-    case 11:
-      text = const Text('Nov', style: style);
-      break;
-    case 12:
-      text = const Text('Dec', style: style);
-      break;
-    default:
-      text = const Text('', style: style);
-      break;
+Map<Tag, int> getTagsBarsIndexes(List<Tag> tags) {
+  Map<Tag, int> res = {};
+  int t = 0;
+  for (Tag item in tags) {
+    res[item] = t;
+    t++;
   }
-  return text;
+  return res;
 }
 
 Widget leftTitleWidgets(double value, TitleMeta meta) {
@@ -187,10 +107,6 @@ List<BarChartGroupData> _buildBarGroups(List<Map<String, List<String>>> data) {
           borderRadius: BorderRadius.circular(4),
         ),
       ],
-      // showingTooltipIndicators: [
-      //   0,
-      //   // 1
-      // ]
     );
   });
 }
@@ -203,12 +119,6 @@ BarChart prepareTotalTrendBar(List<Map<String, List<String>>> trend) {
       minY: 0,
       maxY: 8000,
       gridData: const FlGridData(show: true),
-      // barTouchData: BarTouchData(
-      // enabled: true,
-      // touchTooltipData: BarTouchTooltipData(
-      //
-      // ),
-      // ),
       titlesData: FlTitlesData(
         show: true,
         rightTitles: const AxisTitles(
@@ -271,21 +181,35 @@ BarChart prepareAccountTrendBar(Map<String, Map<String, double>> trend) {
       titlesData: const FlTitlesData(show: true)));
 }
 
+Color reconstructColor(String channels) {
+  List<String> ch = channels.split("-");
+  return Color.from(
+      alpha: double.parse(ch[0]),
+      red: double.parse(ch[1]),
+      green: double.parse(ch[2]),
+      blue: double.parse(ch[3]));
+}
+
 List<BarChartGroupData> _buildStructureBarGroups(
-    Map<String, double> structure) {
+    Map<String, double> structure, List<Tag> tags) {
   List<BarChartGroupData> res = [];
+  Map<Tag, int> tagsMapping = getTagsBarsIndexes(tags);
   for (var item in structure.entries) {
-    res.add(BarChartGroupData(x: tagsBar[item.key]!, barRods: [
-      BarChartRodData(toY: -item.value, color: tg[item.key], width: 10)
-    ]));
+    Tag t = tags.firstWhere((tag) => tag.name == item.key);
+    Color c = t.color != null ? reconstructColor(t.color!) : Colors.red;
+    res.add(BarChartGroupData(
+        x: tagsMapping[t]!,
+        barRods: [BarChartRodData(toY: -item.value, color: c, width: 10)]));
   }
   return res;
 }
 
-BarChart prepareMonthlyStructureBar(Map<String, double> structure) {
+BarChart prepareMonthlyStructureBar(
+    Map<String, double> structure, List<Tag> tags) {
+  Map<Tag, int> tagsMapping = getTagsBarsIndexes(tags);
   return BarChart(BarChartData(
     alignment: BarChartAlignment.spaceEvenly,
-    barGroups: _buildStructureBarGroups(structure),
+    barGroups: _buildStructureBarGroups(structure, tags),
     minY: 0,
     maxY: 1200,
     gridData: const FlGridData(show: true),
@@ -301,10 +225,17 @@ BarChart prepareMonthlyStructureBar(Map<String, double> structure) {
         sideTitles: SideTitles(
           showTitles: true,
           getTitlesWidget: (value, meta) {
-            final String cat = tagsBar.entries
+            final String cat = tagsMapping.entries
                 .firstWhere((e) => e.value == value.toInt(),
-                    orElse: () => const MapEntry("Unknown", 0))
-                .key;
+                    orElse: () => const MapEntry(
+                        Tag(
+                            id: 0,
+                            description: "Unknown",
+                            name: "Unknown",
+                            color: "1.0-0.0-0.0-0.0"),
+                        0))
+                .key
+                .name;
             return SideTitleWidget(
               meta: meta,
               child: Text(cat, style: const TextStyle(fontSize: 5)),
