@@ -20,9 +20,12 @@ Future<List<Tag>> fetchTags() async {
   }
 }
 
-Future<Tag> createTag(String name, String description) async {
+Future<Tag> createTag(String name, String description, String? color) async {
   String url =
       format("{}/create?name={}&description={}", baseUri, name, description);
+  if (color != null) {
+    url = format("{}&color={}", url, color);
+  }
   var resp = await http.post(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     return Tag.fromJson(json.decode(resp.body));
