@@ -26,7 +26,7 @@ class TagDialogState extends State<TagDialog> {
   }
 
   Future<Tag> _createTag(String name, String description, String? color) async {
-    var res = await createTag(name, description, color);
+    var res = await createTag(cache.state["id"], name, description, color);
     return res;
   }
 

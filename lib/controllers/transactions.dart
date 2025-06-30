@@ -13,6 +13,7 @@ Map<String, String> headers = {
 };
 
 Future<String> createTransaction(
+    String id,
     String comment,
     Decimal amount,
     bool isBusiness,
@@ -25,6 +26,7 @@ Future<String> createTransaction(
     List<int> tags) async {
   String url = format("{}/create", baseUri);
   Map<String, dynamic> payload = {
+    'user_id': id,
     'comment': comment,
     'amount': amount,
     'is_business': isBusiness,

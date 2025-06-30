@@ -12,8 +12,8 @@ Map<String, String> headers = {
   'access': auth!,
 };
 
-Future<String> getTotal() async {
-  String url = format("{}/total", baseUri);
+Future<String> getTotal(String id) async {
+  String url = format("{}/total/{}", baseUri, id);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     String res =
@@ -25,8 +25,9 @@ Future<String> getTotal() async {
 }
 
 /// Backend call to collect aggregated in/out numbers per month for all accounts
-Future<List<Map<String, List<String>>>> collectMonthlyTrend(int? limit) async {
-  String url = format("{}/total_trend", baseUri);
+Future<List<Map<String, List<String>>>> collectMonthlyTrend(
+    String id, int? limit) async {
+  String url = format("{}/total_trend/{}", baseUri, id);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     List<Map<String, List<String>>> res = [];
@@ -49,10 +50,10 @@ Future<List<Map<String, List<String>>>> collectMonthlyTrend(int? limit) async {
   }
 }
 
-Future<Map<String, double>> collectMontlyStructure() async {
+Future<Map<String, double>> collectMontlyStructure(String id) async {
   // TBD: for now only current month
   String url =
-      format("{}/expenses_structure?month={}", baseUri, DateTime.now());
+      format("{}/expenses_structure/{}?month={}", baseUri, id, DateTime.now());
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     Map<String, dynamic> payload = jsonDecode(resp.body);
@@ -66,8 +67,9 @@ Future<Map<String, double>> collectMontlyStructure() async {
 }
 
 Future<Map<String, double>> collectReoccuring(
-    DateTime date, String freq) async {
-  String url = format("{}/special?date={}&frequency={}", baseUri, date, freq);
+    String id, DateTime date, String freq) async {
+  String url =
+      format("{}/special/{}?date={}&frequency={}", baseUri, id, date, freq);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     Map<String, dynamic> payload = jsonDecode(resp.body);

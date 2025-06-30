@@ -28,7 +28,7 @@ class AccountDialogState extends State<AccountDialog> {
 
   Future<Account> _createNewAccount(
       String comment, String type, Decimal amount) async {
-    Account res = await createAccount(comment, type, amount);
+    Account res = await createAccount(cache.state["id"], comment, type, amount);
     _comment.clear();
     _amount.clear();
     return res;

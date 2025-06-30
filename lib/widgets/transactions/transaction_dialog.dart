@@ -78,8 +78,8 @@ class TransactionDialogState extends State<TransactionDialog> {
       return t.value.id;
     }).toList());
     Decimal tAmount = isIncoming == false ? -amount : amount;
-    await createTransaction(comment, tAmount, isBusiness, isBorrowed,
-        isRepeating, isSpecial, null, origin, target, taggos);
+    await createTransaction(cache.state['id'], comment, tAmount, isBusiness,
+        isBorrowed, isRepeating, isSpecial, null, origin, target, taggos);
     _tags.clearAll();
     _amount.clear();
     _comment.clear();
@@ -315,13 +315,14 @@ class TransactionDialogState extends State<TransactionDialog> {
                         origin,
                         target,
                         _tags.selectedItems);
-                    String newTotal = await getTotal();
+                    String newTotal = await getTotal(cache.state["id"]);
                     cache.updateSimple("total", newTotal);
                     Map<String, double> newStructure =
-                        await collectMontlyStructure();
+                        await collectMontlyStructure(cache.state["id"]);
                     cache.updateSimple("monthlyStructure", newStructure);
                     List<Map<String, List<String>>> newTrend =
-                        await collectMonthlyTrend(trendMonths);
+                        await collectMonthlyTrend(
+                            cache.state["id"], trendMonths);
                     cache.updateSimple("monthlyTrend", newTrend);
                     setState(() {});
                     if (!context.mounted) return;
