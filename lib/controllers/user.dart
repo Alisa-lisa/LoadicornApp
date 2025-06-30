@@ -18,9 +18,10 @@ Future<String> registerUser(String name, String pswd) async {
     'password': pswd,
     'registration': DateTime.now().toString()
   };
-  var resp = await http.post(Uri.parse(url), headers: headers, body: body);
+  var resp =
+      await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
   if (resp.statusCode == 200) {
-    return json.decode(resp.body);
+    return jsonDecode(resp.body);
   } else {
     throw Exception("Failed to create a user");
   }
@@ -31,14 +32,16 @@ Future<String> logIn(String name, String pswd) async {
   Map<String, String> headers = {
     'Content-Type': 'application/json',
     'access': auth!,
+    'accept': 'application/json'
   };
   Map<String, dynamic> body = {
     'name': name,
     'password': pswd,
   };
-  var resp = await http.post(Uri.parse(url), headers: headers, body: body);
+  var resp =
+      await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
   if (resp.statusCode == 200) {
-    return json.decode(resp.body);
+    return jsonDecode(resp.body);
   } else {
     throw Exception("Failed to login a user");
   }

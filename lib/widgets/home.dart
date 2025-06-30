@@ -1,11 +1,11 @@
 import 'package:format/format.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter/material.dart';
+import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
 import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
 import 'package:loadiapp/widgets/analytics.dart';
-import 'package:loadiapp/controllers/state.dart';
 
 const style = TextStyle(
   fontWeight: FontWeight.bold,
@@ -40,6 +40,15 @@ bool anyDataPresent(List<Map<String, List<String>>> input, DateTime date) {
 class _MyHomePageState extends State<MyHomePage> {
   CustomCache get cache => widget.cache;
   final ScrollController _scroll = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initStats();
+    // Called once when the State object is created
+  }
+
+  Future<void> _initStats() async {}
 
   double getTotalMonth() {
     DateTime now = DateTime.now();

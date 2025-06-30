@@ -11,27 +11,33 @@ String? auth = dotenv.env["AUTH"];
 String baseUri = format("{}/accounts", base!);
 
 Future<Account> createAccount(
-    String comment, String type, Decimal balance) async {
-  String url = format("{}/register?comment={}&acc_type={}&balance={}", baseUri,
-      comment, type.toUpperCase(), balance);
+    String id, String comment, String type, Decimal balance) async {
+  String url = format("{}/register", baseUri);
   Map<String, String> headers = {
     'Content-Type': 'application/json',
     'access': auth!,
   };
-
-  var resp = await http.post(Uri.parse(url), headers: headers);
+  Map<String, dynamic> body = {
+    "comment": comment,
+    "type": type.toUpperCase(),
+    "is_cash": false,
+    "balance": balance,
+    "user_id": id
+  };
+  var resp =
+      await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
   if (resp.statusCode == 200) {
-    return Account.fromJson(json.decode(resp.body));
+    return Account.fromJson(jsonDecode(resp.body));
   } else {
     throw Exception("Failed to create account");
   }
 }
 
-Future<List<Account>> fetchAccounts() async {
-  String url = format('{}/list', baseUri);
+Future<List<Account>> fetchAccounts(String id) async {
+  String url = format('{}/list/{}', baseUri, id);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
-    final List<dynamic> jsonList = json.decode(resp.body);
+    final List<dynamic> jsonList = jsonDecode(resp.body);
     return jsonList.map((json) => Account.fromJson(json)).toList();
   } else {
     throw Exception("Failed to load accounts");

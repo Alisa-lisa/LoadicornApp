@@ -9,8 +9,8 @@ String? base = dotenv.env["SERVER"];
 String? auth = dotenv.env["AUTH"];
 String baseUri = format("{}/tags", base!);
 
-Future<List<Tag>> fetchTags() async {
-  String url = format("{}/list", baseUri);
+Future<List<Tag>> fetchTags(String id) async {
+  String url = format("{}/list/{}", baseUri, id);
   var resp = await http.get(Uri.parse(url), headers: headers);
   if (resp.statusCode == 200) {
     List<dynamic> body = json.decode(resp.body);
@@ -20,15 +20,22 @@ Future<List<Tag>> fetchTags() async {
   }
 }
 
-Future<Tag> createTag(String name, String description, String? color) async {
-  String url =
-      format("{}/create?name={}&description={}", baseUri, name, description);
+Future<Tag> createTag(
+    String id, String name, String description, String? color) async {
+  String url = format("{}/create", baseUri);
+  Map<String, dynamic> body = {
+    "description": description,
+    "name": name,
+    "color": null,
+    "user_id": id
+  };
   if (color != null) {
-    url = format("{}&color={}", url, color);
+    body["color"] = color;
   }
-  var resp = await http.post(Uri.parse(url), headers: headers);
+  var resp =
+      await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
   if (resp.statusCode == 200) {
-    return Tag.fromJson(json.decode(resp.body));
+    return Tag.fromJson(jsonDecode(resp.body));
   } else {
     throw Exception("Failed to create a tag");
   }
