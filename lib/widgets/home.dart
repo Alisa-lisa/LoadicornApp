@@ -6,6 +6,7 @@ import 'package:loadiapp/widgets/accounts/account_dialog.dart';
 import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
 import 'package:loadiapp/widgets/analytics.dart';
+import 'package:loadiapp/widgets/login.dart';
 
 const style = TextStyle(
   fontWeight: FontWeight.bold,
@@ -181,9 +182,20 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Colors.lightBlue.shade100,
             children: [
               SpeedDialChild(
+                  child: const Icon(Icons.logout),
+                  label: 'Logout',
+                  backgroundColor: Colors.lightBlue.shade100,
+                  onTap: () {
+                    setState(() {
+                      cache.updateSimple('id', null);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => LoginPage(cache: cache)));
+                    });
+                  }),
+              SpeedDialChild(
                   child: const Icon(Icons.credit_card),
                   label: 'Account',
-                  backgroundColor: Colors.lightBlue.shade100,
+                  backgroundColor: Colors.lightBlue.shade300,
                   onTap: () {
                     showDialog(
                         context: context,
@@ -196,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
               SpeedDialChild(
                   child: const Icon(Icons.construction),
                   label: 'Tag',
-                  backgroundColor: Colors.lightBlue.shade300,
+                  backgroundColor: Colors.lightBlue.shade500,
                   onTap: () {
                     showDialog(
                         context: context,
@@ -209,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
               SpeedDialChild(
                   child: const Icon(Icons.attach_money),
                   label: 'Transaction',
-                  backgroundColor: Colors.lightBlue.shade500,
+                  backgroundColor: Colors.lightBlue.shade700,
                   onTap: () {
                     showDialog(
                         context: context,

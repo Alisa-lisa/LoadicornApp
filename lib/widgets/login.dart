@@ -31,8 +31,8 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         cache.updateSimple("id", id);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => MyHomePage(
-                title: "Loadicorn", cache: cache))); // Navigate to HomeScree
+            builder: (context) =>
+                LoginPage(cache: cache))); // Navigate to HomeScree
       });
     } catch (e) {
       throw Exception("Could not register a user due to {e}");
