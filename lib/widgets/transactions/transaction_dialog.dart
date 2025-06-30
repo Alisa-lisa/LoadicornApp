@@ -78,8 +78,8 @@ class TransactionDialogState extends State<TransactionDialog> {
       return t.value.id;
     }).toList());
     Decimal tAmount = isIncoming == false ? -amount : amount;
-    await createTransaction(comment, tAmount, isBusiness, isBorrowed,
-        isRepeating, isSpecial, null, origin, target, taggos);
+    await createTransaction(cache.state['id'], comment, tAmount, isBusiness,
+        isBorrowed, isRepeating, isSpecial, null, origin, target, taggos);
     _tags.clearAll();
     _amount.clear();
     _comment.clear();
