@@ -24,16 +24,38 @@ class _LoginPageState extends State<LoginPage> {
 
   bool obscureText = true;
 
+  Future<void> _prepareCharts(String id) async {
+    List<Account> accs = await fetchAccounts(id);
+    List<Tag> tags = await fetchTags(id);
+    String total = await getTotal(id);
+    List<Map<String, List<String>>> monthlyTrend =
+        await collectMonthlyTrend(id, trendMonths);
+    Map<String, double> monthlyStructure = await collectMontlyStructure(id);
+    DateTime now = DateTime.now();
+    Map<String, double> monthlyReoccur =
+        await collectReoccuring(id, now, "REPEAT");
+    Map<String, double> monthlySpecial =
+        await collectReoccuring(id, now, "SPECIAL");
+    setState(() {
+      cache.updateSimple("id", id);
+      cache.add({"accounts": accs});
+      cache.add({"tags": tags});
+      cache.add({"total": total});
+      cache.add({"monthlyTrend": monthlyTrend});
+      cache.add({"monthlyStructure": monthlyStructure});
+      cache.add({"reoccur": monthlyReoccur});
+      cache.add({"special": monthlySpecial});
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => MyHomePage(
+              title: "Loadicorn", cache: cache))); // Navigate to HomeScree
+    });
+  }
+
   Future<void> _register() async {
     try {
       String id = await registerUser(
           _usernameController.text, _passwordController.text);
-      setState(() {
-        cache.updateSimple("id", id);
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) =>
-                LoginPage(cache: cache))); // Navigate to HomeScree
-      });
+      await _prepareCharts(id);
     } catch (e) {
       throw Exception("Could not register a user due to {e}");
     }
@@ -43,30 +65,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String id =
           await logIn(_usernameController.text, _passwordController.text);
-      List<Account> accs = await fetchAccounts(id);
-      List<Tag> tags = await fetchTags(id);
-      String total = await getTotal(id);
-      List<Map<String, List<String>>> monthlyTrend =
-          await collectMonthlyTrend(id, trendMonths);
-      Map<String, double> monthlyStructure = await collectMontlyStructure(id);
-      DateTime now = DateTime.now();
-      Map<String, double> monthlyReoccur =
-          await collectReoccuring(id, now, "REPEAT");
-      Map<String, double> monthlySpecial =
-          await collectReoccuring(id, now, "SPECIAL");
-      setState(() {
-        cache.updateSimple("id", id);
-        cache.add({"accounts": accs});
-        cache.add({"tags": tags});
-        cache.add({"total": total});
-        cache.add({"monthlyTrend": monthlyTrend});
-        cache.add({"monthlyStructure": monthlyStructure});
-        cache.add({"reoccur": monthlyReoccur});
-        cache.add({"special": monthlySpecial});
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => MyHomePage(
-                title: "Loadicorn", cache: cache))); // Navigate to HomeScree
-      });
+      await _prepareCharts(id);
     } catch (e) {
       throw Exception("Username and password are incorrect due to {e}");
     }
