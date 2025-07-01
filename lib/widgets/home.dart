@@ -2,6 +2,7 @@ import 'package:format/format.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter/material.dart';
 import 'package:loadiapp/controllers/state.dart';
+import 'package:loadiapp/controllers/local_storage.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
 import 'package:loadiapp/widgets/tags/tag_dialog.dart';
 import 'package:loadiapp/widgets/transactions/transaction_dialog.dart';
@@ -15,8 +16,7 @@ const style = TextStyle(
 
 class MyHomePage extends StatefulWidget {
   final CustomCache cache;
-  final String title;
-  const MyHomePage({super.key, required this.title, required this.cache});
+  const MyHomePage({super.key, required this.cache});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -45,11 +45,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _initStats();
-    // Called once when the State object is created
+    _prepareCharts(cache.state["id"]);
   }
 
-  Future<void> _initStats() async {}
+  Future<void> _prepareCharts(String id) async {}
 
   double getTotalMonth() {
     DateTime now = DateTime.now();
@@ -72,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Text(widget.title),
+            title: const Text("Loadicorn"),
             actions: <Widget>[
               Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -185,7 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Icon(Icons.logout),
                   label: 'Logout',
                   backgroundColor: Colors.lightBlue.shade100,
-                  onTap: () {
+                  onTap: () async {
+                    await Storage.clean();
                     setState(() {
                       cache.updateSimple('id', null);
                       Navigator.of(context).pushReplacement(MaterialPageRoute(

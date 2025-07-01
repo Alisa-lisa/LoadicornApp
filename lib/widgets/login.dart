@@ -1,5 +1,6 @@
-import 'package:loadiapp/controllers/state.dart';
 import 'package:flutter/material.dart';
+import 'package:loadiapp/controllers/local_storage.dart';
+import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/user.dart';
 import 'package:loadiapp/widgets/home.dart';
 import 'package:loadiapp/const.dart';
@@ -25,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   bool obscureText = true;
 
   Future<void> _prepareCharts(String id) async {
+    await Storage.setStr("id", id);
     List<Account> accs = await fetchAccounts(id);
     List<Tag> tags = await fetchTags(id);
     String total = await getTotal(id);
@@ -46,8 +48,8 @@ class _LoginPageState extends State<LoginPage> {
       cache.add({"reoccur": monthlyReoccur});
       cache.add({"special": monthlySpecial});
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MyHomePage(
-              title: "Loadicorn", cache: cache))); // Navigate to HomeScree
+          builder: (context) =>
+              MyHomePage(cache: cache))); // Navigate to HomeScree
     });
   }
 
