@@ -11,6 +11,11 @@ import 'package:loadiapp/models/account.dart';
 import 'package:loadiapp/models/tag.dart';
 import 'package:loadiapp/widgets/misc.dart';
 
+class AccountItem {
+  String? name;
+  Color? color;
+}
+
 class TransactionDialog extends StatefulWidget {
   final CustomCache cache;
   const TransactionDialog({super.key, required this.cache});
@@ -39,17 +44,44 @@ class TransactionDialogState extends State<TransactionDialog> {
 
   List<DropdownMenuItem<String>> getAccounts() {
     List<DropdownMenuItem<String>> res = [];
+
     res.addAll(
         cache.state["accounts"].map<DropdownMenuItem<String>>((Account value) {
+      final Color itemColor =
+          accountsColors[value.comment.trim()]?.withValues(alpha: 0.3) ??
+              Colors.transparent;
+
       return DropdownMenuItem<String>(
-          value: value.id, child: Text(value.comment));
+        value: value.id,
+        child: Container(
+          width: double.infinity,
+          color: itemColor,
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+          alignment: Alignment.center,
+          child: Text(value.comment, textAlign: TextAlign.center),
+        ),
+      );
     }).toList());
-    res.add(const DropdownMenuItem<String>(
+
+    res.add(
+      const DropdownMenuItem<String>(
         value: "none",
-        child: Text(
-          "none",
-          textAlign: TextAlign.center,
-        )));
+        child: SizedBox(
+          width: double.infinity,
+          child: ColoredBox(
+            color: Colors.transparent,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+              child: Text(
+                "none",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
     return res;
   }
 
@@ -183,7 +215,6 @@ class TransactionDialogState extends State<TransactionDialog> {
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black),
                                 hint: const Text("Account"),
-                                focusColor: Colors.grey,
                                 value: origin,
                                 items: ddItems,
                                 alignment: Alignment.center,
@@ -215,7 +246,6 @@ class TransactionDialogState extends State<TransactionDialog> {
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black),
                                 hint: const Text("Account"),
-                                focusColor: Colors.grey,
                                 value: target,
                                 items: ddItems,
                                 alignment: Alignment.center,

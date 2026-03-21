@@ -35,6 +35,7 @@ dependencies:
   decimal:
   format:
   bloc:
+  collection:
   multi_dropdown:
   fl_chart:
 

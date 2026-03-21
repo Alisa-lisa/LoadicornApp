@@ -4,20 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:loadiapp/models/tag.dart';
 import 'package:loadiapp/widgets/misc.dart';
 
-// TBD add colors/icons to DBs
-Map<String, Color> accountsColors = {
-  "haspa work": Colors.lightBlue[100]!,
-  "default cash": Colors.teal[100]!,
-  "revolut": Colors.blueGrey[200]!,
-  "vivid": Colors.lightBlue,
-  "dkb personal": Colors.deepPurple[600]!,
-  "dkb invest": Colors.blueGrey[400]!,
-  "dkb shared": Colors.blueGrey[800]!,
-  "revolut private": Colors.indigo[700]!,
-  "haspa private": Colors.purple[800]!
-};
-Color noCustomTagColor = Colors.indigo[300]!;
-
 Map<Tag, int> getTagsBarsIndexes(List<Tag> tags) {
   Map<Tag, int> res = {};
   int t = 0;
@@ -142,44 +128,44 @@ BarChart prepareTotalTrendBar(List<Map<String, List<String>>> trend) {
       )));
 }
 
-List<BarChartRodStackItem> getStackedData(Map<String, double> data) {
-  List<BarChartRodStackItem> res = [];
-  double current = 0;
-  for (var item in data.entries) {
-    res.add(BarChartRodStackItem(
-        current, current + item.value, accountsColors[item.key]!));
-    current += item.value;
-  }
-  return res;
-}
+// List<BarChartRodStackItem> getStackedData(Map<String, double> data) {
+//   List<BarChartRodStackItem> res = [];
+//   double current = 0;
+//   for (var item in data.entries) {
+//     res.add(BarChartRodStackItem(
+//         current, current + item.value, accountsColors[item.key]!));
+//     current += item.value;
+//   }
+//   return res;
+// }
 
-List<BarChartGroupData> _buildAccountBarGroups(
-    Map<String, Map<String, double>> trend) {
-  List<BarChartGroupData> res = [];
-  int index = 0;
-  for (var item in trend.entries) {
-    double total = item.value.values.reduce((v, e) => v + e);
-    res.add(BarChartGroupData(x: index, barRods: [
-      BarChartRodData(
-          toY: total,
-          color: Colors.black,
-          rodStackItems: getStackedData(item.value),
-          width: 8)
-    ]));
-    index++;
-  }
-  return res;
-}
+// List<BarChartGroupData> _buildAccountBarGroups(
+//     Map<String, Map<String, double>> trend) {
+//   List<BarChartGroupData> res = [];
+//   int index = 0;
+//   for (var item in trend.entries) {
+//     double total = item.value.values.reduce((v, e) => v + e);
+//     res.add(BarChartGroupData(x: index, barRods: [
+//       BarChartRodData(
+//           toY: total,
+//           color: Colors.black,
+//           rodStackItems: getStackedData(item.value),
+//           width: 8)
+//     ]));
+//     index++;
+//   }
+//   return res;
+// }
 
-BarChart prepareAccountTrendBar(Map<String, Map<String, double>> trend) {
-  return BarChart(BarChartData(
-      alignment: BarChartAlignment.spaceEvenly,
-      barGroups: _buildAccountBarGroups(trend),
-      minY: 0,
-      maxY: 6000,
-      gridData: const FlGridData(show: true),
-      titlesData: const FlTitlesData(show: true)));
-}
+// BarChart prepareAccountTrendBar(Map<String, Map<String, double>> trend) {
+//   return BarChart(BarChartData(
+//       alignment: BarChartAlignment.spaceEvenly,
+//       barGroups: _buildAccountBarGroups(trend),
+//       minY: 0,
+//       maxY: 6000,
+//       gridData: const FlGridData(show: true),
+//       titlesData: const FlTitlesData(show: true)));
+// }
 
 Color reconstructColor(String channels) {
   List<String> ch = channels.split("-");
