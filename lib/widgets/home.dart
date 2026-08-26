@@ -1,6 +1,8 @@
 import 'package:format/format.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:loadiapp/controllers/state.dart';
 import 'package:loadiapp/controllers/local_storage.dart';
 import 'package:loadiapp/widgets/accounts/account_dialog.dart';
@@ -50,6 +52,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _prepareCharts(String id) async {}
 
+  Future<void> _openAnalytics() async {
+    String? url = dotenv.env["ANALYTICS"];
+    if (url == null) return;
+    Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   double getTotalMonth() {
     DateTime now = DateTime.now();
     String today = getToday(now);
@@ -80,7 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
         body: CustomScrollView(
           controller: _scroll,
           slivers: [
-            const SliverPadding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
             SliverToBoxAdapter(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,7 +163,23 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: prepareTotalTrendBar(
                                 cache.state["monthlyTrend"]))),
                   ]),
-            )
+            ),
+            SliverToBoxAdapter(
+                child: Center(
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                        child: TextButton.icon(
+                            onPressed: _openAnalytics,
+                            style: TextButton.styleFrom(
+                                minimumSize: Size.zero,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                tapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap),
+                            icon: const Icon(Icons.query_stats, size: 16),
+                            label: const Text("Analytics",
+                                style: TextStyle(fontSize: 12)))))),
+            const SliverPadding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           ],
         ),
         // SingleChildScrollView(
